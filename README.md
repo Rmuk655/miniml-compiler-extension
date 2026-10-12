@@ -30,10 +30,17 @@ try raise GenericException(42) with GenericException(42) -> 10 ;;   (* 10 *)
 
 ## Build and run
 
-Requires OCaml and [Dune](https://dune.build/).
+Requires OCaml (tested with 5.1), [Dune](https://dune.build/) and [Menhir](http://gallium.inria.fr/~fpottier/menhir/):
 
 ```bash
-dune build
+opam install dune menhir
+dune build                                  # builds miniml.exe and the other zoo languages
+./miniml.exe -n -l src/miniml/test_exn.ml   # run the exception tests
+```
+
+To run a file and diff its output against an expected-output file:
+
+```bash
 python buildRun.py src/miniml/test_exn test_exp
 ```
 
