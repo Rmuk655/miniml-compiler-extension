@@ -3,8 +3,9 @@ a compiler and an abstract machine.
 
 The language has the following constructs:
 
-* Integers with arithmetic operations `+`, `-` and `*`. (There is no
-  division because the language has no exceptions.)
+* Integers with arithmetic operations `+`, `-`, `*` and `/`. Division by
+  zero raises the exception `DivisionByZero`, which can be caught with
+  `try ... with`.
 * Booleans with conditional statement and comparison of integers
   `=` and `<`.
 * Recursive functions and function application. The expression

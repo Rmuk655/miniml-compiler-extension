@@ -1,21 +1,43 @@
-# READ ME
+# MiniML with Exception Handling
 
-## Introduction
+An extension of **MiniML**, the small statically typed functional language from the [Programming Languages Zoo](https://github.com/andrejbauer/plzoo) (by Andrej Bauer and Matija Pretnar; their license is in `LICENSE.txt`). This fork adds division and an exception-handling system with `raise` and `try ... with`, carried through every stage of the compiler.
 
-This README section explains how to use the MiniML language with the new exception handling features, including custom exceptions like `DivisionByZero` and `GenericException`.
+Course project for Software Development Fundamentals, IIT Hyderabad. The project report is `SDF_Miniml_Project_Report.pdf`.
 
-MiniML is a functional programming language that supports arithmetic, recursive functions, and exception handling. This version includes two new built-in exceptions:
+## What was added
 
-- **DivisionByZero**: Raised when an attempt is made to divide by zero.
-- **GenericException of int**: A generic exception that carries an integer argument.
+| Stage | File | Change |
+|---|---|---|
+| Lexer | `src/miniml/lexer.mll` | Tokens for `/`, `try`, `with`, `raise`, `DivisionByZero`, `GenericException`, `{ }` and `\|` |
+| Parser | `src/miniml/parser.mly` | Grammar for division, `raise` and `try e1 with <exception> -> e2` |
+| AST | `src/miniml/syntax.ml` | `Divide`, `Raise`, `TryWith` and the exception values `DivisionByZero` / `GenericException of int` |
+| Type checker | `src/miniml/type_check.ml` | Typing rules for `raise` and `try ... with`, including an analysis of expressions that always raise |
+| Compiler | `src/miniml/compile.ml` | Code generation for division, raise and try/with |
+| Abstract machine | `src/miniml/machine.ml` | New instructions (`IRaise`, `ITryWith`) and exception values on the stack; division by zero raises `DivisionByZero` at run time |
+| Tests | `src/miniml/test_exn.ml` | Regression programs for raising, catching, nested handlers and exceptions from functions |
 
-With the new exception handling system, users can now raise and catch exceptions within their programs.
+The original language (integers, booleans, conditionals, recursive functions and top-level definitions) is unchanged.
 
-## Installation
+## Exceptions at a glance
 
-To get started with MiniML, clone the repository: https://github.com/Rmuk655/Miniml_Compiler and build the environment.
+- `DivisionByZero`: raised by `/` when the divisor is zero.
+- `GenericException of int`: a user exception carrying an integer.
 
-**If you are under the `plzoo` directory, run:** python ./buildRun.py src/miniml/test_exn test_exp
+```
+try 10 / 0 with DivisionByZero -> 5 ;;                    (* 5 *)
+try raise GenericException(42) with GenericException(42) -> 10 ;;   (* 10 *)
+```
+
+## Build and run
+
+Requires OCaml and [Dune](https://dune.build/).
+
+```bash
+dune build
+python buildRun.py src/miniml/test_exn test_exp
+```
+
+`buildRun.py` builds the project with Dune, runs the given MiniML file with `miniml.exe`, and diffs the output against an expected-output file. See its header comment for the exact assumptions.
 
 ## Basic Syntax
 
